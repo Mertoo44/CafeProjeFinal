@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Hakkımızda</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- İkonlar -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Bizim CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">☕ Cafe Keyif</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="index.html">Anasayfa</a>
+                    <a class="nav-link" href="menu.html">Menü</a>
+                    <a class="nav-link active" href="about.html">Hakkımızda</a>
+                    <a class="nav-link" href="contact.html">İletişim</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Ana İçerik Alanı -->
+    <div class="container" style="margin-top: 100px; padding-bottom: 50px;">
+        
+        <!-- Üst Kısım: Hikaye ve Resim -->
+        <div class="card border-0 shadow-lg mb-5" style="background-color: rgba(255, 255, 255, 0.95);">
+            <div class="row g-0 align-items-center">
+                <!-- Sol Taraf: Resim -->
+                <div class="col-md-5">
+                    <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1000&auto=format&fit=crop" 
+                         class="img-fluid rounded-start h-100" 
+                         alt="Cafe İç Mekan" 
+                         style="min-height: 400px; object-fit: cover;">
+                </div>
+                <!-- Sağ Taraf: Metin -->
+                <div class="col-md-7">
+                    <div class="card-body p-5">
+                        <h2 class="card-title fw-bold mb-4" style="color: #3e2723;">Bizim Hikayemiz</h2>
+                        <p class="card-text lead">
+                            2025 yılında küçük bir hayalle başladığımız bu yolculukta, kahve tutkusunu samimi bir ortamla buluşturmayı hedefledik. 
+                            Cafe Keyif olarak, sadece bir kahve dükkanı değil, dostlarınızla güzel anılar biriktirebileceğiniz ikinci eviniz olmak istiyoruz.
+                        </p>
+                        <p class="card-text">
+                            Dünyanın en kaliteli çekirdeklerini özenle seçiyor, ustalıkla kavuruyor ve fincanınıza sevgiyle dolduruyoruz. 
+                            Yanında sunduğumuz el yapımı tatlılarımız ise bu keyfi tamamlayan en güzel detaylar.
+                        </p>
+                        <p class="card-text"><small class="text-muted">Kahve kokusunun huzurla buluştuğu nokta.</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orta Kısım: İkonlu Özellikler -->
+        <div class="row text-center mb-5">
+            <div class="col-md-4 mb-3">
+                <div class="p-4 bg-white rounded shadow-sm h-100" style="opacity: 0.9;">
+                    <i class="fa-solid fa-mug-hot fa-3x mb-3" style="color: #8d6e63;"></i>
+                    <h4 style="color: #3e2723;">Taze Kahve</h4>
+                    <p>Her sabah taze çekilen %100 Arabica çekirdekleriyle güne zinde başlayın.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="p-4 bg-white rounded shadow-sm h-100" style="opacity: 0.9;">
+                    <i class="fa-solid fa-wifi fa-3x mb-3" style="color: #8d6e63;"></i>
+                    <h4 style="color: #3e2723;">Hızlı Wi-Fi</h4>
+                    <p>İster ders çalışın, ister işlerinizi halledin. Yüksek hızlı internetimiz emrinizde.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="p-4 bg-white rounded shadow-sm h-100" style="opacity: 0.9;">
+                    <i class="fa-solid fa-couch fa-3x mb-3" style="color: #8d6e63;"></i>
+                    <h4 style="color: #3e2723;">Rahat Ortam</h4>
+                    <p>Kitabınızı okuyup huzur bulabileceğiniz sessiz ve konforlu köşelerimiz sizi bekliyor.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alt Kısım: Öğrenci / Proje Bilgisi (ÖNEMLİ) -->
+        <div class="alert alert-light border-0 shadow-sm text-center p-4" role="alert" style="background-color: rgba(255, 255, 255, 0.95); border-left: 5px solid #3e2723 !important;">
+            <h4 class="alert-heading fw-bold" style="color: #3e2723;">🎓 Proje Künyesi</h4>
+            <p>Bu web sitesi, Yazılım Mühendisliği Bölümü <strong>Web Tasarım ve Programlama</strong> dersi final projesi kapsamında geliştirilmiştir.</p>
+            <hr>
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-start">
+                    <ul class="list-unstyled mb-0" style="font-size: 1.1rem;">
+                        <li><strong>👨‍🎓 Öğrenci Adı:</strong> Mert Ali Kızılkaya</li>
+                        <li><strong>🆔 Öğrenci No:</strong> 23040301051</li>
+                        <li><strong>💻 Kullanılan Teknolojiler:</strong> Node.js, Express, SQLite, HTML, CSS, Bootstrap</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center text-md-start mb-2 mb-md-0">
+                    <span class="footer-text">&copy; 2025 <strong>Cafe Keyif</strong>. Tüm hakları saklıdır.</span>
+                </div>
+                <div class="col-md-4 text-center mb-2 mb-md-0">
+                    <a href="#" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                </div>
+                <div class="col-md-4 text-center text-md-end">
+                    <span class="footer-text"><i class="fa-regular fa-clock me-2"></i> 09:00 - 23:00</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

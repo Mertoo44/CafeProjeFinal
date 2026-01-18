@@ -1,0 +1,136 @@
+/* Genel Sayfa Ayarları */
+body {
+    /* Arka plan görseli - Kahve temalı */
+    background-image: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=1920&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Sayfa kaydırılsa da resim sabit kalsın */
+    background-repeat: no-repeat;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+}
+
+/* Navbar (Menü Çubuğu) Rengi */
+.navbar {
+    background-color: rgba(61, 43, 31, 0.95) !important; /* Koyu Kahve + Saydamlık */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    user-select: none;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #fce4ec !important; /* Krem rengi yazı */
+    font-size: 1.5rem;
+}
+
+/* İçerik Kutuları (Glassmorphism Efekti) */
+/* Container, Card ve Formların arkasını yarı saydam beyaz yapar */
+.container.main-content, .card, .bg-light, .table {
+    background-color: rgba(255, 255, 255, 0.92) !important; /* %92 opak beyaz */
+    border-radius: 15px !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(4px); /* Arkayı hafif buzlar */
+}
+
+/* Kartların üzerine gelince efekt */
+.card {
+    transition: transform 0.3s ease;
+    border: none;
+}
+
+.card:hover {
+    transform: translateY(-5px); /* Kart hafif yukarı kalkar */
+}
+
+/* Menüdeki Fiyat Rengi */
+.text-primary {
+    color: #8B4513 !important; /* Kahve rengi fiyat */
+    font-weight: bold;
+}
+
+/* Butonlar */
+.btn-primary {
+    background-color: #8B4513; /* Butonun normal rengi (Sütlü Kahve) */
+    border-color: #8B4513;
+    padding: 12px 35px;        /* Butonu biraz daha geniş ve dolgun yaptım */
+    font-weight: bold;         /* Yazı kalın olsun */
+    letter-spacing: 1px;       /* Harf aralarını biraz açtım, şık durur */
+    transition: all 0.3s ease; /* SİHİR BURADA: Tüm değişimler 0.3 saniyede yumuşakça olsun */
+}
+
+/* Mouse üzerine gelince (Hover) ne olsun? */
+.btn-primary:hover {
+    background-color: #4E342E; /* Daha koyu kahve (Bitter Çikolata tonu) */
+    border-color: #4E342E;
+    color: #fff;               /* Yazı rengi beyaz kalsın */
+    
+    /* Hareket Efektleri */
+    transform: translateY(-5px) scale(1.05); /* 5px yukarı kalk ve %5 büyü */
+    box-shadow: 0 10px 20px rgba(62, 39, 35, 0.4); /* Altına yumuşak bir gölge at */
+}
+
+/* Tıklayınca (Active) ne olsun? */
+.btn-primary:active {
+    transform: translateY(1px); /* Tıklayınca hafifçe içeri göçsün (gerçek buton hissi) */
+    box-shadow: 0 2px 5px rgba(62, 39, 35, 0.4);
+}
+
+/* Tablo Ayarları */
+.table-dark {
+    background-color: #3e2723 !important; /* Koyu kahve başlık */
+}
+/* --- SAYFA DÜZENİ (FLEXBOX YAPISI) --- */
+body {
+    /* Sayfayı esnek bir kutu yapıyoruz */
+    display: flex;
+    flex-direction: column;
+    
+    /* Sayfanın yüksekliği EN AZ ekran boyutu kadar olsun */
+    min-height: 100vh;
+    
+    /* Arka plan görsel ayarları (daha önce eklemiştik, koruyoruz) */
+    background-image: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=1920&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    /* Önceki koddan kalan padding'i sıfırlıyoruz */
+    padding-bottom: 0 !important;
+    user-select: none;
+}
+
+/* --- FOOTER TASARIMI --- */
+.footer {
+    /* SİHİRLİ KOD BURASI: margin-top: auto */
+    /* Bu kod, footer'ı içeriğin bittiği yerden, sayfanın en altına kadar iter */
+    margin-top: auto; 
+    
+    background-color: #3e2723;
+    color: #efebe9;
+    padding: 15px 0;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.3);
+    border-top: 1px solid #5d4037;
+    width: 100%;
+    user-select: none;
+}
+
+.footer a {
+    color: #efebe9;
+    text-decoration: none;
+    font-size: 1.2rem;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: #ffccbc;
+    transform: scale(1.1);
+}
+
+.footer-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
