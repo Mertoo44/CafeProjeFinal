@@ -52,11 +52,47 @@ app.get('/api/menu', (req, res) => {
     });
 });
 
+// Ürün Ekleme Kısmı
+// 2. CREATE (Yeni Veri Ekle - AYNI İSİM KONTROLLÜ)
 app.post('/api/menu', (req, res) => {
-    const { name, price, category } = req.body;
-    db.run("INSERT INTO menu (name, price, category) VALUES (?, ?, ?)", [name, price, category], function (err) {
-        if (err) res.status(400).json({ error: err.message });
-        else res.status(201).json({ id: this.lastID, name, price, category });
+    // Gelen verileri alırken boşlukları temizleyelim (trim)
+    const name = req.body.name.trim(); 
+    const price = req.body.price;
+    const category = req.body.category.trim();
+
+    // 1. Basit Kontroller
+    if (!name || !price || !category) {
+        return res.status(400).json({ error: "Lütfen tüm alanları doldurunuz." });
+    }
+    if (price < 0) {
+        return res.status(400).json({ error: "Fiyat 0'dan küçük olamaz!" });
+    }
+
+    // 2. KONTROL: Veritabanında bu isimde ürün var mı?
+    // COLLATE NOCASE komutu büyük/küçük harfi önemsemez (Çay = çay)
+    db.get("SELECT id FROM menu WHERE name = ? COLLATE NOCASE", [name], (err, row) => {
+        if (err) {
+            return res.status(400).json({ error: err.message });
+        }
+
+        // Eğer row (satır) döndüyse, demek ki bu ürün zaten var!
+        if (row) {
+            return res.status(400).json({ error: `"${name}" isimli ürün zaten menüde var!` });
+        }
+
+        // 3. Ürün yoksa KAYDETME İŞLEMİ
+        db.run("INSERT INTO menu (name, price, category) VALUES (?, ?, ?)", [name, price, category], function (err) {
+            if (err) {
+                res.status(400).json({ error: err.message });
+            } else {
+                res.status(201).json({
+                    id: this.lastID,
+                    name: name,
+                    price: price,
+                    category: category
+                });
+            }
+        });
     });
 });
 
@@ -67,8 +103,15 @@ app.delete('/api/menu/:id', (req, res) => {
     });
 });
 
+// Ürün Güncelleme Kısmı
 app.put('/api/menu/:id', (req, res) => {
     const { name, price, category } = req.body;
+
+    // HATA KONTROLÜ: Fiyat 0'dan küçükse işlemi durdur
+    if (price < 0) {
+        return res.status(400).json({ error: "Fiyat 0'dan küçük olamaz!" });
+    }
+
     db.run("UPDATE menu SET name = ?, price = ?, category = ? WHERE id = ?", [name, price, category, req.params.id], function (err) {
         if (err) res.status(400).json({ error: err.message });
         else res.json({ id: req.params.id, name, price, category });

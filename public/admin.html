@@ -5,7 +5,7 @@
     <title>Yönetim Paneli</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- İkon Kütüphanesi (FontAwesome) -->
+    <!-- İkon Kütüphanesi -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
@@ -33,14 +33,13 @@
 
                         <!-- 2. Fiyat Kutusu -->
                         <div class="mb-2">
-                            <input type="number" id="price" class="form-control" placeholder="Fiyat (TL)" required>
+                            <!-- min="0" ekleyerek klavyeden eksi yazılmasını zorlaştırıyoruz -->
+                            <input type="number" id="price" class="form-control" placeholder="Fiyat (TL)" min="0" required>
                         </div>
 
                         <!-- 3. Kategori Kutusu -->
                         <div class="mb-3">
                             <input class="form-control" list="categoryOptions" id="category" placeholder="Kategori Seç veya Yaz..." required>
-                            
-                            <!-- Seçenekler Listesi -->
                             <datalist id="categoryOptions">
                                 <option value="Kahve">
                                 <option value="Tatlı">
@@ -69,7 +68,7 @@
             </div>
         </div>
 
-        <!-- --- BÖLÜM 2: GELEN MESAJLAR (YENİ EKLENDİ) --- -->
+        <!-- --- BÖLÜM 2: GELEN MESAJLAR --- -->
         <div class="row mt-4 mb-5">
             <div class="col-12">
                 <div class="bg-white p-3 rounded shadow-sm">
@@ -85,28 +84,20 @@
                                     <th>İşlem</th>
                                 </tr>
                             </thead>
-                            <tbody id="messagesTable">
-                                <!-- Mesajlar buraya yüklenecek -->
-                            </tbody>
+                            <tbody id="messagesTable"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- SCRIPTS -->
     <script>
-        // --- 1. ÜRÜN İŞLEMLERİ ---
-
         // Verileri Yükle
         function loadItems() {
             fetch('/api/menu')
-                .then(res => {
-                    if (!res.ok) throw new Error("Veriler çekilemedi!");
-                    return res.json();
-                })
+                .then(res => res.json())
                 .then(data => {
                     const table = document.getElementById('adminTable');
                     table.innerHTML = "";
@@ -122,17 +113,24 @@
                                 </td>
                             </tr>`;
                     });
-                })
-                .catch(err => console.error("Bağlantı Hatası:", err));
+                });
         }
 
-        // Ürün Ekle
+        // Ürün Ekle (Negatif Kontrollü)
         document.getElementById('addForm').addEventListener('submit', (e) => {
             e.preventDefault();
             
+            const priceVal = document.getElementById('price').value;
+            
+            // FRONTEND KONTROLÜ: Eksi değer girilirse durdur
+            if(priceVal < 0) {
+                alert("HATA: Fiyat 0'dan küçük olamaz! ⛔");
+                return;
+            }
+
             const newItem = {
                 name: document.getElementById('name').value,
-                price: document.getElementById('price').value,
+                price: priceVal,
                 category: document.getElementById('category').value
             };
 
@@ -142,7 +140,7 @@
                 body: JSON.stringify(newItem)
             })
             .then(res => {
-                if (!res.ok) return res.json().then(errData => { throw new Error(errData.error) });
+                if(!res.ok) return res.json().then(err => { throw new Error(err.error) });
                 return res.json();
             })
             .then(() => { 
@@ -150,43 +148,39 @@
                 document.getElementById('addForm').reset();
                 alert("Ürün başarıyla eklendi! ✅");
             })
-            .catch(err => alert("Hata: " + err.message + " ❌"));
+            .catch(err => alert("Hata: " + err.message));
         });
 
         // Ürün Sil
         window.del = (id) => { 
             if(confirm('Silmek istediğine emin misin?')) {
-                fetch(`/api/menu/${id}`, {method: 'DELETE'})
-                .then(res => {
-                    if(!res.ok) throw new Error("Silme işlemi başarısız.");
-                    loadItems();
-                })
-                .catch(err => alert(err.message));
+                fetch(`/api/menu/${id}`, {method: 'DELETE'}).then(() => loadItems());
             }
         };
 
-        // Ürün Güncelle
+        // Ürün Güncelle (Negatif Kontrollü)
         window.upd = (id, name, price, currentCategory) => {
             const newPrice = prompt(`${name} için yeni fiyatı girin:`, price);
+            
             if (newPrice !== null && newPrice.trim() !== "") {
-                if (Number(newPrice) < 0) {
-                    alert("HATA: Fiyat 0'dan küçük olamaz!");
+                // KONTROL: Prompt'a eksi değer yazılırsa
+                if(Number(newPrice) < 0) {
+                    alert("HATA: Fiyat negatif olamaz! İşlem iptal edildi.");
                     return;
                 }
+
                 fetch(`/api/menu/${id}`, {
                     method: 'PUT',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ name: name, price: newPrice, category: currentCategory })
                 })
                 .then(res => {
-                    if(!res.ok) throw new Error("Güncelleme başarısız.");
+                    if(!res.ok) return res.json().then(err => { throw new Error(err.error) });
                     loadItems();
                 })
                 .catch(err => alert("Hata: " + err.message));
             }
         };
-
-        // --- 2. MESAJ İŞLEMLERİ (YENİ EKLENDİ) ---
 
         // Mesajları Yükle
         function loadMessages() {
@@ -195,12 +189,10 @@
                 .then(data => {
                     const table = document.getElementById('messagesTable');
                     table.innerHTML = "";
-                    
                     if(data.length === 0) {
                         table.innerHTML = '<tr><td colspan="5" class="text-center p-3 text-muted">Henüz hiç mesaj yok.</td></tr>';
                         return;
                     }
-
                     data.forEach(msg => {
                         table.innerHTML += `
                             <tr>
@@ -208,58 +200,35 @@
                                 <td class="fw-bold">${msg.name}</td>
                                 <td><a href="mailto:${msg.email}">${msg.email}</a></td>
                                 <td>${msg.message}</td>
-                                <td>
-                                    <button onclick="deleteMessage(${msg.id})" class="btn btn-sm btn-danger">Sil</button>
-                                </td>
-                            </tr>
-                        `;
+                                <td><button onclick="deleteMessage(${msg.id})" class="btn btn-sm btn-danger">Sil</button></td>
+                            </tr>`;
                     });
                 });
         }
 
-        // Mesaj Sil
         window.deleteMessage = (id) => {
             if(confirm('Bu mesajı silmek istiyor musunuz?')) {
-                fetch(`/api/messages/${id}`, { method: 'DELETE' })
-                    .then(() => loadMessages());
+                fetch(`/api/messages/${id}`, { method: 'DELETE' }).then(() => loadMessages());
             }
         };
 
-        // Sayfa açıldığında her ikisini de yükle
         loadItems();
         loadMessages();
-
     </script>
 
-    <!-- Footer Başlangıcı -->
+    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="row align-items-center">
-                
-                <!-- SOL: Telif Hakkı -->
-                <div class="col-md-4 text-center text-md-start mb-2 mb-md-0">
-                    <span class="footer-text">
-                        &copy; 2025 <strong>Cafe Keyif</strong>. Tüm hakları saklıdır.
-                    </span>
-                </div>
-
-                <!-- ORTA: Sosyal Medya İkonları -->
+                <div class="col-md-4 text-center text-md-start mb-2 mb-md-0"><span class="footer-text">&copy; 2025 <strong>Cafe Keyif</strong>. Tüm hakları saklıdır.</span></div>
                 <div class="col-md-4 text-center mb-2 mb-md-0">
                     <a href="#" target="_blank"><i class="fa-brands fa-instagram"></i></a>
                     <a href="#" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
                     <a href="#" target="_blank"><i class="fa-brands fa-facebook"></i></a>
                 </div>
-
-                <!-- SAĞ: Çalışma Saatleri -->
-                <div class="col-md-4 text-center text-md-end">
-                    <span class="footer-text">
-                        <i class="fa-regular fa-clock me-2"></i> 09:00 - 23:00
-                    </span>
-                </div>
-
+                <div class="col-md-4 text-center text-md-end"><span class="footer-text"><i class="fa-regular fa-clock me-2"></i> 09:00 - 23:00</span></div>
             </div>
         </div>
     </footer>
-    <!-- Footer Bitişi -->
 </body>
 </html>
