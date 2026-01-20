@@ -51,7 +51,16 @@
     </footer>
 
     <script>
-        function login() { window.location.href = "admin.html"; }
+        function login() {
+            const kAdi = document.querySelectorAll('input')[0].value;
+            const sifre = document.querySelectorAll('input')[1].value;
+
+            if (kAdi === "admin" && sifre === "1234") {
+                window.location.href = "admin.html";
+            } else {
+                alert("Hata: Kullanıcı adı veya şifre yanlış!");
+            }
+        }
     </script>
 </body>
 </html>
