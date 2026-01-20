@@ -5,7 +5,6 @@
     <title>Yönetim Paneli</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- İkon Kütüphanesi -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
@@ -18,26 +17,21 @@
 
     <div class="container main-content p-4" style="margin-top: 100px;">
         
-        <!-- --- BÖLÜM 1: ÜRÜN YÖNETİMİ --- -->
         <div class="row">
-            <!-- Sol taraf: Ekleme Formu -->
+    
             <div class="col-md-4">
                 <div class="card p-3 mb-4 border-0 bg-white">
                     <h5 class="mb-3 text-success">➕ Yeni Ürün Ekle</h5>
                     <form id="addForm">
                         
-                        <!-- 1. Ürün Adı Kutusu -->
                         <div class="mb-2">
                             <input type="text" id="name" class="form-control" placeholder="Ürün Adı" required>
                         </div>
 
-                        <!-- 2. Fiyat Kutusu -->
                         <div class="mb-2">
-                            <!-- min="0" ekleyerek klavyeden eksi yazılmasını zorlaştırıyoruz -->
                             <input type="number" id="price" class="form-control" placeholder="Fiyat (TL)" min="0" required>
                         </div>
 
-                        <!-- 3. Kategori Kutusu -->
                         <div class="mb-3">
                             <input class="form-control" list="categoryOptions" id="category" placeholder="Kategori Seç veya Yaz..." required>
                             <datalist id="categoryOptions">
@@ -50,13 +44,11 @@
                             </datalist>
                         </div>
 
-                        <!-- 4. Kaydet Butonu -->
                         <button type="submit" class="btn btn-success w-100">Kaydet</button>
                     </form>
                 </div>
             </div>
 
-            <!-- Sağ taraf: Liste -->
             <div class="col-md-8">
                 <div class="bg-white p-3 rounded">
                     <h5 class="mb-3 text-primary">📋 Ürün Listesi</h5>
@@ -68,7 +60,6 @@
             </div>
         </div>
 
-        <!-- --- BÖLÜM 2: GELEN MESAJLAR --- -->
         <div class="row mt-4 mb-5">
             <div class="col-12">
                 <div class="bg-white p-3 rounded shadow-sm">
@@ -92,9 +83,7 @@
         </div>
     </div>
 
-    <!-- SCRIPTS -->
     <script>
-        // Verileri Yükle
         function loadItems() {
             fetch('/api/menu')
                 .then(res => res.json())
@@ -116,13 +105,11 @@
                 });
         }
 
-        // Ürün Ekle (Negatif Kontrollü)
         document.getElementById('addForm').addEventListener('submit', (e) => {
             e.preventDefault();
             
             const priceVal = document.getElementById('price').value;
             
-            // FRONTEND KONTROLÜ: Eksi değer girilirse durdur
             if(priceVal < 0) {
                 alert("HATA: Fiyat 0'dan küçük olamaz! ⛔");
                 return;
@@ -151,19 +138,16 @@
             .catch(err => alert("Hata: " + err.message));
         });
 
-        // Ürün Sil
         window.del = (id) => { 
             if(confirm('Silmek istediğine emin misin?')) {
                 fetch(`/api/menu/${id}`, {method: 'DELETE'}).then(() => loadItems());
             }
         };
 
-        // Ürün Güncelle (Negatif Kontrollü)
         window.upd = (id, name, price, currentCategory) => {
             const newPrice = prompt(`${name} için yeni fiyatı girin:`, price);
             
             if (newPrice !== null && newPrice.trim() !== "") {
-                // KONTROL: Prompt'a eksi değer yazılırsa
                 if(Number(newPrice) < 0) {
                     alert("HATA: Fiyat negatif olamaz! İşlem iptal edildi.");
                     return;
@@ -182,7 +166,6 @@
             }
         };
 
-        // Mesajları Yükle
         function loadMessages() {
             fetch('/api/messages')
                 .then(res => res.json())
@@ -216,7 +199,6 @@
         loadMessages();
     </script>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="row align-items-center">

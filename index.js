@@ -5,26 +5,23 @@ const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const port = 3000;
 
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// --- VERİTABANI BAĞLANTISI ---
 const db = new sqlite3.Database('./cafe.db', (err) => {
     if (err) console.error(err.message);
     else console.log('SQLite veritabanına bağlanıldı.');
 });
 
-// --- TABLOLARI OLUŞTURMA ---
 db.serialize(() => {
-    // 1. Menü Tablosu
     db.run(`CREATE TABLE IF NOT EXISTS menu (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         price REAL,
         category TEXT
     )`);
-
-    // 2. Mesajlar Tablosu (YENİ EKLENDİ)
+ 
     db.run(`CREATE TABLE IF NOT EXISTS messages (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
@@ -33,18 +30,19 @@ db.serialize(() => {
         date TEXT
     )`);
 
-    // Menü boşsa örnek veri ekle
     db.get("SELECT count(*) as count FROM menu", (err, row) => {
         if (row.count === 0) {
             const stmt = db.prepare("INSERT INTO menu (name, price, category) VALUES (?, ?, ?)");
             stmt.run("Latte", 65, "Kahve");
             stmt.run("Cheesecake", 85, "Tatlı");
+            stmt.run("Çay", 25, "Sıcak İçecek");
+            stmt.run("Pumpkin Spice Latte", 170, "Kahve");
             stmt.finalize();
         }
     });
 });
 
-// --- MENU API ENDPOINTLERİ (Aynen duruyor) ---
+// --- MENU API ENDPOINTLERİ ---
 app.get('/api/menu', (req, res) => {
     db.all("SELECT * FROM menu", [], (err, rows) => {
         if (err) res.status(400).json({ error: err.message });
@@ -53,14 +51,11 @@ app.get('/api/menu', (req, res) => {
 });
 
 // Ürün Ekleme Kısmı
-// 2. CREATE (Yeni Veri Ekle - AYNI İSİM KONTROLLÜ)
 app.post('/api/menu', (req, res) => {
-    // Gelen verileri alırken boşlukları temizleyelim (trim)
     const name = req.body.name.trim(); 
     const price = req.body.price;
     const category = req.body.category.trim();
 
-    // 1. Basit Kontroller
     if (!name || !price || !category) {
         return res.status(400).json({ error: "Lütfen tüm alanları doldurunuz." });
     }
@@ -68,19 +63,15 @@ app.post('/api/menu', (req, res) => {
         return res.status(400).json({ error: "Fiyat 0'dan küçük olamaz!" });
     }
 
-    // 2. KONTROL: Veritabanında bu isimde ürün var mı?
-    // COLLATE NOCASE komutu büyük/küçük harfi önemsemez (Çay = çay)
     db.get("SELECT id FROM menu WHERE name = ? COLLATE NOCASE", [name], (err, row) => {
         if (err) {
             return res.status(400).json({ error: err.message });
         }
 
-        // Eğer row (satır) döndüyse, demek ki bu ürün zaten var!
         if (row) {
             return res.status(400).json({ error: `"${name}" isimli ürün zaten menüde var!` });
         }
 
-        // 3. Ürün yoksa KAYDETME İŞLEMİ
         db.run("INSERT INTO menu (name, price, category) VALUES (?, ?, ?)", [name, price, category], function (err) {
             if (err) {
                 res.status(400).json({ error: err.message });
@@ -107,7 +98,6 @@ app.delete('/api/menu/:id', (req, res) => {
 app.put('/api/menu/:id', (req, res) => {
     const { name, price, category } = req.body;
 
-    // HATA KONTROLÜ: Fiyat 0'dan küçükse işlemi durdur
     if (price < 0) {
         return res.status(400).json({ error: "Fiyat 0'dan küçük olamaz!" });
     }
@@ -118,12 +108,11 @@ app.put('/api/menu/:id', (req, res) => {
     });
 });
 
-// --- MESAJ API ENDPOINTLERİ (YENİ EKLENDİ) ---
+// --- MESAJ API ENDPOINTLERİ  ---
 
-// 1. Mesaj Gönder (Create)
 app.post('/api/messages', (req, res) => {
     const { name, email, message } = req.body;
-    const date = new Date().toLocaleString('tr-TR'); // Tarih ve saat ekleyelim
+    const date = new Date().toLocaleString('tr-TR'); 
     
     db.run("INSERT INTO messages (name, email, message, date) VALUES (?, ?, ?, ?)", [name, email, message, date], function (err) {
         if (err) res.status(400).json({ error: err.message });
@@ -131,15 +120,13 @@ app.post('/api/messages', (req, res) => {
     });
 });
 
-// 2. Mesajları Oku (Read - Admin İçin)
 app.get('/api/messages', (req, res) => {
-    db.all("SELECT * FROM messages ORDER BY id DESC", [], (err, rows) => { // En son gelen en üstte
+    db.all("SELECT * FROM messages ORDER BY id DESC", [], (err, rows) => {
         if (err) res.status(400).json({ error: err.message });
         else res.json(rows);
     });
 });
 
-// 3. Mesaj Sil (Delete - Admin İçin)
 app.delete('/api/messages/:id', (req, res) => {
     db.run("DELETE FROM messages WHERE id = ?", req.params.id, function (err) {
         if (err) res.status(400).json({ error: err.message });
